@@ -1,0 +1,26 @@
+{
+  "name": "rec_me-backend",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Agent0506/Rec_Me-Backend#readme",
+  "bugs": {
+    "url": "https://github.com/Agent0506/Rec_Me-Backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Agent0506/Rec_Me-Backend.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
