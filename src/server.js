@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-
+import { verifyUnityToken } from "./middleware/auth.js";
 const app = express();
 
 app.use(cors());
@@ -12,18 +12,13 @@ app.get('/health', (req, res) => {
   res.status(200).send("OK; Server is running");
 });
 
-app.get('/me', (req, res) => {
-  const id = req.query.id;
-
-  if (!players[id]) {
-    players[id] = {
-      name : "Player " + id,
-      level : 1,
-      coins: 200
-    };
-  }
-
-  res.json(players[id]);
+app.get('/me', verifyUnityToken,  (req, res) => {
+  res.json({
+    playerId: req.playerId,
+    name: "player",
+    level: 1,
+    coins: 200
+  })
 });
 
 const PORT = process.env.PORT || 3000;
