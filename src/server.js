@@ -23,7 +23,6 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/me', verifyUnityToken, async (req, res) => {
-  try {
   const id = req.playerId;
 
   const result = await pool.query(
@@ -41,13 +40,6 @@ app.get('/me', verifyUnityToken, async (req, res) => {
   }
 
   res.json(result.rows[0]);
-}
-catch {
-  console.error(err);
-  res.status(500).json({
-      error: "Internal server error"
-  });
-}
 });
 
 const PORT = process.env.PORT || 3000;
