@@ -20,6 +20,8 @@ export async function verifyUnityToken(req, res, next) {
       issuer: "https://player-auth.services.api.unity.com",
     });
 
+    console.log(JSON.stringify(payload, null, 2));
+
     if (
       process.env.UNITY_PROJECT_ID &&
       payload.project_id !== process.env.UNITY_PROJECT_ID
