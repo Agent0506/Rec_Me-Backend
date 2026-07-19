@@ -32,8 +32,8 @@ app.get('/me', verifyUnityToken, async (req, res) => {
 
   if (result.rows.length === 0) {
     const newPlayer = await pool.query(
-      "INSERT INTO players (player_id, name, level, coins, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [id, "player_" + id.slice(0, 5), 1, 0, Date.now()]
+      "INSERT INTO players (player_id, name, level, coins) VALUES ($1, $2, $3, $4) RETURNING *",
+      [id, "player_" + id.slice(0, 5), 1, 0]
     );
 
     return res.json(newPlayer.rows[0]);

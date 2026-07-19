@@ -1,21 +1,44 @@
-import jwt from 'jsonwebtoken';
+import { createRemoteJWKSet, jwtVerify } from "jose";
 
-export const verifyUnityToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+const JWKS = createRemoteJWKSet(
+  new URL("https://player-auth.services.api.unity.com/.well-known/jwks.json")
+);
 
-  if (!authHeader)
-    return res.status(401).json({ error: "Missing token" })
-  
-  const token = authHeader.split(" ")[1];
-
+export async function verifyUnityToken(req, res, next) {
   try {
-    const decode = jwt.decode(token);
+    const authHeader = req.headers.authorization;
 
-    req.playerId = decode?.sub;
+    if (!authHeader?.startsWith("Bearer ")) {
+      return res.status(401).json({
+        error: "Missing Bearer token",
+      });
+    }
+
+    const token = authHeader.substring(7);
+
+    const { payload } = await jwtVerify(token, JWKS, {
+      issuer: "https://player-auth.services.api.unity.com",
+    });
+
+    if (
+      process.env.UNITY_PROJECT_ID &&
+      payload.project_id !== process.env.UNITY_PROJECT_ID
+    ) {
+      return res.status(403).json({
+        error: "Invalid Unity project"
+      })
+    }
+
+    req.playerId = payload.sub;
+    req.player = payload.sub;
 
     next();
   }
   catch(err) {
-    return res.status(401).json({ error:"Invalid token" })
+    console.error(err);
+
+    return res.status(401).json({
+      error: "Invalid token",
+    });
   }
 }
