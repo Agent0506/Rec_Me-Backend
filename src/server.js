@@ -42,6 +42,44 @@ app.get('/me', verifyUnityToken, async (req, res) => {
   res.json(result.rows[0]);
 });
 
+app.get('/player', async (req, res) => {
+  const username = req.query.username;
+
+  if (!username)
+    return res.status(400).json({
+      error: "Missing username"
+    });
+
+    try {
+  const result  = await pool.query(
+    "SELECT * FROM players WHERE username = $1",
+    [username]
+  );
+
+  if (result .rows.length === 0) {
+    return res.status(401).json({
+      error: "Player not found"
+    });
+
+    const player = result.rows[0];
+
+    res.json({
+      id: player.player_id,
+      username: player.name,
+      level: player.level
+    })
+  }
+}
+catch(err) {
+        console.error(err);
+
+        res.status(500).json({
+            error: "Database error"
+        });
+
+  }
+})
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
