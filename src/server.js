@@ -24,16 +24,15 @@ app.get('/health', (req, res) => {
 
 app.get('/me', verifyUnityToken, async (req, res) => {
   try {
-
     const id = req.playerId;
 
-    const result = await pool.query(
+    let result = await pool.query(
       "SELECT * FROM players WHERE player_id = $1",
       [id]
     );
 
     if (result.rows.length === 0) {
-      const newPlayer = await pool.query(
+      result = await pool.query(
         "INSERT INTO players (player_id, name, level, coins) VALUES ($1, $2, $3, $4) RETURNING *",
         [id, "player_" + id.slice(0, 5), 1, 0]
       );
@@ -46,8 +45,8 @@ app.get('/me', verifyUnityToken, async (req, res) => {
       username: player.name,
       level: player.level
     });
-  }
-  catch (err) {
+
+  } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
