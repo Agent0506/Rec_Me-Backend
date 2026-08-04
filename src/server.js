@@ -52,6 +52,38 @@ app.get('/me', verifyUnityToken, async (req, res) => {
   }
 });
 
+app.get('/player/id', async (req, res) => {
+  try {
+    const id = req.query.id;
+
+    const result = await pool.query(
+      "SELECT * FROM players WHERE player_id = $1",
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: "Player not found"
+      });
+    }
+
+    const player = result.rows[0];
+
+    res.json({
+      id: player.player_id,
+      username: player.name,
+      level: player.level
+    });
+  }
+  catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      error: "Database error"
+    });
+  }
+});
+
 app.get('/player', async (req, res) => {
   const username = req.query.username;
 
